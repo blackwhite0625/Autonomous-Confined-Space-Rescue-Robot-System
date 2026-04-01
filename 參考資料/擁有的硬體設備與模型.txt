@@ -1,0 +1,19 @@
+硬體設備:
+樹莓派5b 8gb 
+usb攝影機+舵機2個伺服馬達sg90
+1個超聲波元件HC-SR04 
+2個雙槽18650電池座供電->2個L298N＋4個馬達＋4個麥克拉姆車輪
+USB喇叭
+USB麥克風
+Raspberry Pi AI Kit 人工智慧套件 | PCIe 擴充套件
+
+樹莓派資訊：
+使用者名稱：blackwhite0625
+
+影像訓練ai模型onnx：
+普通物件與人群-yolov8n.onnx
+姿勢偵測模型-yolov8n-pose.onnx
+
+影像訓練ai模型hef：
+普通物件與人群-yolov8n.hef
+姿勢偵測模型-yolov8s_pose.hef

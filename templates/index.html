@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>搜救機器人 控制台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
+    <script src="/static/exploration_map.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #f5f0eb;
+            --card: #fff;
+            --border: #e0dbd5;
+            --text: #1a1a1a;
+            --dim: #888580;
+            --dimmer: #b5b2ad;
+            --danger: #c0392b;
+            --warn: #e67e22;
+            --safe: #27ae60;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none
+        }
+
+        .hdr {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100
+        }
+
+        .hdr h1 {
+            font-size: .95rem;
+            font-weight: 700;
+            letter-spacing: -.5px
+        }
+
+        .hdr-right {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .badge {
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            border: none
+        }
+
+        .badge-standby {
+            background: #888;
+            color: #f5f0eb
+        }
+
+        .badge-search {
+            background: #1a1a1a;
+            color: #f5f0eb
+        }
+
+        .badge-anomaly {
+            background: var(--warn);
+            color: #fff;
+            animation: flash 1s infinite
+        }
+
+        .badge-lock_on {
+            background: #e74c3c;
+            color: #fff;
+            animation: flash .5s infinite
+        }
+
+        .badge-inquiry {
+            background: #8e44ad;
+            color: #fff;
+            animation: flash .8s infinite
+        }
+
+        .badge-confirm {
+            background: #2980b9;
+            color: #fff
+        }
+
+        .badge-report {
+            background: var(--danger);
+            color: #fff;
+            animation: flash .3s infinite
+        }
+
+        .badge-manual {
+            background: #333;
+            color: #f5f0eb
+        }
+
+        .sys-tag {
+            font-size: .55rem;
+            color: var(--dimmer);
+            padding: 2px 6px;
+            border: 1px solid var(--border);
+            border-radius: 4px
+        }
+
+        @keyframes flash {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .4
+            }
+        }
+
+        .main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .vid {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border)
+        }
+
+        .vid img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover
+        }
+
+        .vid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(0, 0, 0, .55) 0%, transparent 100%)
+        }
+
+        .vid-tag {
+            font-size: .6rem;
+            font-weight: 700;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: rgba(255, 0, 0, .6)
+        }
+
+        .vid-perf {
+            font-size: .55rem;
+            color: rgba(255, 255, 255, .8);
+            font-variant-numeric: tabular-nums
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px
+        }
+
+        .st {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 4px;
+            text-align: center;
+            transition: border-color .3s
+        }
+
+        .st.danger {
+            border-color: var(--danger);
+            background: #fdf2f2
+        }
+
+        .st-v {
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums
+        }
+
+        .st-l {
+            font-size: .5rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-top: 2px
+        }
+
+        .c-n {
+            color: var(--text)
+        }
+
+        .c-s {
+            color: var(--safe)
+        }
+
+        .c-d {
+            color: var(--danger)
+        }
+
+        .c-w {
+            color: var(--warn)
+        }
+
+        .sys-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .sys-chip {
+            font-size: .55rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .sys-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block
+        }
+
+        .sys-dot.on {
+            background: var(--safe)
+        }
+
+        .sys-dot.off {
+            background: var(--danger)
+        }
+
+        .ctrls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px
+        }
+
+        .pnl {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px
+        }
+
+        .pnl-t {
+            font-size: .6rem;
+            font-weight: 600;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center
+        }
+
+        .joy {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            position: relative;
+            background: radial-gradient(circle, #eae5df, #ddd8d2);
+            border-radius: 50%;
+            border: 2px solid var(--border)
+        }
+
+        .btns {
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: .75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            background: var(--card);
+            color: var(--dim)
+        }
+
+        .btn:active {
+            transform: scale(.97)
+        }
+
+        .btn-a {
+            color: var(--text)
+        }
+
+        .btn-m {
+            color: var(--text)
+        }
+
+        .btn-s {
+            color: var(--danger);
+            border-color: rgba(192, 57, 43, .3)
+        }
+
+        .btn-h {
+            color: #555
+        }
+
+        .btn.on {
+            color: #fff
+        }
+
+        .btn-a.on {
+            background: #1a1a1a;
+            border-color: #1a1a1a
+        }
+
+        .btn-m.on {
+            background: #333;
+            border-color: #333
+        }
+
+        .srv-sec {
+            margin-top: 2px
+        }
+
+        .srv-btn {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: .75rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--card);
+            color: #555;
+            text-align: center;
+            transition: all .2s
+        }
+
+        .srv-btn.on {
+            background: #1a1a1a;
+            color: #f5f0eb;
+            border-color: #1a1a1a
+        }
+
+        .srv-pnl {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease, opacity .25s ease;
+            opacity: 0
+        }
+
+        .srv-pnl.open {
+            max-height: 260px;
+            opacity: 1;
+            margin-top: 10px
+        }
+
+        .srv-info {
+            text-align: center;
+            font-size: .65rem;
+            color: var(--dim);
+            margin-top: 6px;
+            font-variant-numeric: tabular-nums
+        }
+
+        .log {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px
+        }
+
+        .log-t {
+            font-size: .6rem;
+            font-weight: 600;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .log-cnt {
+            font-size: .55rem;
+            color: var(--dimmer);
+            font-weight: 400
+        }
+
+        .log-ls {
+            max-height: 160px;
+            overflow-y: auto;
+            font-size: .7rem;
+            color: var(--dim)
+        }
+
+        .log-e {
+            padding: 3px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 6px;
+            align-items: baseline
+        }
+
+        .log-e:last-child {
+            border-bottom: none
+        }
+
+        .log-tm {
+            font-variant-numeric: tabular-nums;
+            color: var(--dimmer);
+            min-width: 52px
+        }
+
+        .log-lv {
+            font-size: .5rem;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 3px;
+            text-transform: uppercase
+        }
+
+        .lv-info {
+            background: #eee;
+            color: #555
+        }
+
+        .lv-warn {
+            background: #fff3e0;
+            color: var(--warn)
+        }
+
+        .lv-danger {
+            background: #fde8e8;
+            color: var(--danger)
+        }
+
+        .log-mg {
+            flex: 1
+        }
+
+        @media(max-width:600px) {
+            .stats {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .ctrls {
+                grid-template-columns: 1fr
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hdr">
+        <h1>搜救機器人 <a href="/demo" style="font-size:12px;color:#999;text-decoration:none;font-weight:400;margin-left:8px;">▶ Demo</a></h1>
+        <div class="hdr-right">
+            <span class="sys-tag" id="mode-tag">MANUAL</span>
+            <div id="state-badge" class="badge badge-standby"><span id="state-text">STANDBY</span></div>
+        </div>
+    </header>
+
+    <main class="main">
+
+        <div class="vid">
+            <img id="video-stream" src="/video_feed" alt="Live">
+            <div class="vid-overlay">
+                <span class="vid-tag">LIVE</span>
+                <span class="vid-perf" id="perf-info">-- fps | -- ms</span>
+            </div>
+        </div>
+
+        <div class="sys-bar">
+            <div class="sys-chip"><span class="sys-dot" id="dot-cam"></span>攝影機</div>
+            <div class="sys-chip"><span class="sys-dot" id="dot-ai"></span>AI 偵測</div>
+            <div class="sys-chip"><span class="sys-dot" id="dot-gpio"></span>GPIO</div>
+        </div>
+
+        <div class="stats">
+            <div class="st" id="st-person">
+                <div class="st-v c-n" id="v-person">0</div>
+                <div class="st-l">人數</div>
+            </div>
+            <div class="st" id="st-dist">
+                <div class="st-v c-s" id="v-dist">--</div>
+                <div class="st-l">距離 cm</div>
+            </div>
+            <div class="st" id="st-score">
+                <div class="st-v c-n" id="v-score">0.00</div>
+                <div class="st-l">風險分數</div>
+            </div>
+            <div class="st" id="st-fallen">
+                <div class="st-v c-n" id="v-fallen">0</div>
+                <div class="st-l">倒地</div>
+            </div>
+            <div class="st">
+                <div class="st-v c-n" id="v-alert">0</div>
+                <div class="st-l">警報</div>
+            </div>
+            <div class="st">
+                <div class="st-v c-n" id="v-fps">--</div>
+                <div class="st-l">FPS</div>
+            </div>
+        </div>
+
+        <div class="ctrls">
+            <div class="pnl">
+                <div class="pnl-t">Movement</div>
+                <div id="joystick-zone" class="joy"></div>
+            </div>
+            <div class="pnl">
+                <div class="pnl-t">Mode</div>
+                <div class="btns">
+                    <button id="btn-auto" class="btn btn-a" onclick="setMode('auto')">自動搜索</button>
+                    <button id="btn-manual" class="btn btn-m on" onclick="setMode('manual')">手動控制</button>
+                    <button class="btn btn-s" onclick="emergencyStop()">緊急停止</button>
+                    <button id="btn-backtrack" class="btn" style="background:#059669;color:white;display:none;" onclick="requestBacktrack()">返回出發點</button>
+                    <button class="btn btn-h" onclick="servoHome()">雲台歸位</button>
+                    <a href="/demo" class="btn" style="text-decoration:none;text-align:center;background:#1e1b4b;color:white;">切換展示模式</a>
+                </div>
+            </div>
+            <div class="pnl">
+                <div class="pnl-t">Options</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                    <button class="btn" id="sm-D" onclick="setSearchMode('D')" style="padding:10px 4px;">靜止掃描</button>
+                    <button class="btn" id="sm-E" onclick="setSearchMode('E')" style="padding:10px 4px;">智慧巡邏</button>
+                    <button class="btn" id="sm-F" onclick="setSearchMode('F')" style="padding:10px 4px;">掃描巡邏</button>
+                </div>
+                <div class="pnl-t" style="margin-top:10px; margin-bottom:4px;">亮度 (<span id="br-val">0</span>)</div>
+                <input type="range" min="-100" max="100" value="0" style="width:100%" onchange="setBrightness(this.value)" oninput="document.getElementById('br-val').innerText=this.value">
+                <div class="pnl-t" style="margin-top:14px; margin-bottom:4px;">語音對講</div>
+                <button class="btn" id="btn-intercom" onclick="cmd('toggle_intercom')" style="padding:8px 4px;margin-bottom:6px;">開啟對講</button>
+                <div id="intercom-panel" style="display:none;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+                        <button class="btn" id="btn-listen" onclick="toggleListen()" style="padding:8px 4px;">收音 OFF</button>
+                        <button class="btn" onclick="icSpeak()" style="padding:8px 4px;">發送語音</button>
+                    </div>
+                    <input id="ic-text" type="text" placeholder="輸入要對受困者說的話..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:.75rem;margin-bottom:4px;">
+                    <div id="ic-presets" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;"></div>
+                </div>
+                <div class="pnl-t" style="margin-top:10px; margin-bottom:4px;">Emergency & Test</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                    <button class="btn" style="background:var(--warn); color:white; border:none;" onclick="cmd('test_inquiry')">測試語音詢問</button>
+                    <button class="btn" style="background:var(--danger); color:white; border:none;" onclick="cmd('trigger_critical_help')">強制警報</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="srv-sec">
+            <button id="srv-btn" class="srv-btn" onclick="toggleServo()">雲台控制 (OFF)</button>
+            <div id="srv-pnl" class="srv-pnl">
+                <div class="pnl-t" style="margin-top:10px">Gimbal</div>
+                <div id="srv-joy" class="joy"></div>
+                <div class="srv-info" id="srv-angle">Pan: 0 | Tilt: 0</div>
+            </div>
+        </div>
+
+        <div class="srv-sec">
+            <button id="map-btn" class="srv-btn" onclick="toggleMap()">探索地圖 (OFF)</button>
+            <div id="map-pnl" class="srv-pnl">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px;">
+                    <span style="font-size:.55rem;color:var(--dim);font-weight:600;">覆蓋率 <span id="map-coverage">0%</span></span>
+                    <button class="btn" style="padding:4px 10px;font-size:.55rem;width:auto;" onclick="cmd('reset_heat_map')">重置</button>
+                </div>
+                <canvas id="map-canvas" width="400" height="400" style="width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--border);background:#1e1e1e;"></canvas>
+                <div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:.55rem;color:var(--dim)">
+                    <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:3px;background:#4aa;display:inline-block;border-radius:1px"></span>路線</span>
+                    <span style="display:flex;align-items:center;gap:3px"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:8px solid #e67e22;display:inline-block"></span>障礙</span>
+                    <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;background:#e74c3c;border-radius:50%;display:inline-block"></span>人員</span>
+                    <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;background:#2ecc71;border-radius:2px;display:inline-block"></span>車子</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="log">
+            <div class="log-t">
+                <span>系統日誌</span>
+                <span class="log-cnt" id="log-cnt">0 筆</span>
+            </div>
+            <div class="log-ls" id="log-ls">
+                <div class="log-e">
+                    <span class="log-tm">--:--:--</span>
+                    <span class="log-lv lv-info">INFO</span>
+                    <span class="log-mg">系統待機</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // === Movement Joystick ===
+        const joy = nipplejs.create({ zone: document.getElementById('joystick-zone'), mode: 'static', position: { left: '50%', top: '50%' }, color: '#333', size: 100 });
+        let jX = 0, jY = 0, lX = null, lY = null;
+        joy.on('move', (e, d) => { jX = d.vector.x; jY = d.vector.y });
+        joy.on('end', () => { jX = 0; jY = 0; sm(0, 0) });
+        setInterval(() => { const rx = Math.round(jX * 100) / 100, ry = Math.round(jY * 100) / 100; if (rx !== lX || ry !== lY) { lX = rx; lY = ry; sm(rx, ry) } }, 80);
+        function sm(x, y) { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'move', vx: x, vy: y }) }).catch(() => { }) }
+
+        // === Servo Joystick ===
+        // === Map Panel Toggle ===
+        let mapOpen = false;
+        function toggleMap() {
+            mapOpen = !mapOpen;
+            const p = document.getElementById('map-pnl'), b = document.getElementById('map-btn');
+            if (mapOpen) { p.classList.add('open'); p.style.maxHeight = '500px'; b.classList.add('on'); b.textContent = '探索地圖 (ON)';
+                setTimeout(() => { if (typeof ExplorationMap !== 'undefined') window._expMap = new ExplorationMap('map-canvas'); }, 100);
+            } else { p.classList.remove('open'); p.style.maxHeight = '0'; b.classList.remove('on'); b.textContent = '探索地圖 (OFF)'; }
+        }
+
+        let sJoy = null, sOpen = false, sX = 0, sY = 0, lP = null, lT = null, sActive = false;
+        function toggleServo() {
+            sOpen = !sOpen;
+            const p = document.getElementById('srv-pnl'), b = document.getElementById('srv-btn');
+            if (sOpen) { p.classList.add('open'); b.classList.add('on'); b.textContent = '雲台控制 (ON)'; setTimeout(initSJ, 350) }
+            else { p.classList.remove('open'); b.classList.remove('on'); b.textContent = '雲台控制 (OFF)'; destroySJ() }
+        }
+        function initSJ() {
+            if (sJoy) return;
+            sJoy = nipplejs.create({ zone: document.getElementById('srv-joy'), mode: 'static', position: { left: '50%', top: '50%' }, color: '#555', size: 100 });
+            sJoy.on('move', (e, d) => { sX = d.vector.x; sY = d.vector.y; sActive = true });
+            sJoy.on('end', () => { sActive = false });
+        }
+        function destroySJ() { if (sJoy) { sJoy.destroy(); sJoy = null } sX = 0; sY = 0; lP = null; lT = null; sActive = false }
+        setInterval(() => {
+            if (!sOpen || !sActive) return;
+            const p = Math.round(sX * 90), t = Math.round(sY * 90);
+            if (p !== lP || t !== lT) {
+                lP = p; lT = t; document.getElementById('srv-angle').textContent = 'Pan: ' + p + ' | Tilt: ' + t;
+                fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'servo', pan: p, tilt: t }) }).catch(() => { })
+            }
+        }, 80);
+
+        // === Mode & Options ===
+        function setMode(m) { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: m === 'manual' ? 'mode_manual' : 'mode_auto' }) }).catch(() => { }) }
+        function emergencyStop() { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'stop' }) }).catch(() => { }) }
+        function requestBacktrack() { if(confirm('啟動路徑回溯，返回出發點？')) cmd('request_backtrack'); }
+        function servoHome() { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'home' }) }).catch(() => { }) }
+        function setSearchMode(m) { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'search_mode', search_mode: m }) }).catch(() => { }) }
+        function setBrightness(v) { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'set_brightness', value: parseInt(v) }) }).catch(() => { }) }
+        function cmd(action) { fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: action }) }).catch(() => { }) }
+
+        // === Status Polling ===
+        const cMap = { STANDBY:'badge-standby', SEARCH:'badge-search', ANOMALY:'badge-anomaly', LOCK_ON:'badge-lock_on', INQUIRY:'badge-inquiry', CONFIRM:'badge-confirm', REPORT:'badge-report', BACKTRACK:'badge-search', MANUAL:'badge-manual' };
+        let prevLogLen = 0;
+
+        function poll() {
+            fetch('/status').then(r => r.json()).then(d => {
+                const stage = d.mission_stage || 'STANDBY';
+                document.getElementById('state-badge').className = 'badge ' + (cMap[stage] || 'badge-standby');
+                document.getElementById('state-text').textContent = stage;
+                document.getElementById('mode-tag').textContent = d.mode.toUpperCase();
+
+                document.getElementById('btn-auto').classList.toggle('on', d.mode === 'auto');
+                document.getElementById('btn-manual').classList.toggle('on', d.mode === 'manual');
+
+                // 手動模式鎖定自動巡邏控制選項
+                const isManual = d.mode === 'manual';
+                ['sm-D','sm-E','sm-F'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) { btn.disabled = isManual; btn.style.opacity = isManual ? '0.35' : '1'; }
+                });
+
+                if (d.search_mode) {
+                    ['D','E','F'].forEach(m => {
+                        const btn = document.getElementById('sm-' + m);
+                        if (btn) {
+                            const isOn = d.search_mode === m;
+                            btn.classList.toggle('on', isOn);
+                            btn.style.background = isOn ? '#1a1a1a' : '';
+                            btn.style.color = isOn ? '#fff' : '';
+                        }
+                    });
+                }
+
+                const pe = document.getElementById('v-person'); pe.textContent = d.person_count;
+                pe.className = 'st-v ' + (d.person_count > 0 ? 'c-w' : 'c-n');
+                document.getElementById('st-person').classList.toggle('danger', d.person_count > 0);
+
+                const di = document.getElementById('v-dist');
+                if (d.distance_cm < 0) { di.textContent = '--'; di.className = 'st-v c-n'; document.getElementById('st-dist').classList.remove('danger') }
+                else { di.textContent = d.distance_cm; di.className = 'st-v ' + (d.distance_cm < 30 ? 'c-d' : d.distance_cm < 50 ? 'c-w' : 'c-s'); document.getElementById('st-dist').classList.toggle('danger', d.distance_cm < 30) }
+
+                const sc = document.getElementById('v-score');
+                const vs = d.victim_score || 0;
+                sc.textContent = vs.toFixed(2);
+                sc.className = 'st-v ' + (vs >= 0.6 ? 'c-d' : vs >= 0.3 ? 'c-w' : 'c-s');
+                document.getElementById('st-score').classList.toggle('danger', vs >= 0.6);
+
+                const fa = document.getElementById('v-fallen'); fa.textContent = d.fallen_count;
+                fa.className = 'st-v ' + (d.fallen_count > 0 ? 'c-d' : 'c-n');
+                document.getElementById('st-fallen').classList.toggle('danger', d.fallen_count > 0);
+
+                document.getElementById('v-alert').textContent = d.alert_count;
+                document.getElementById('v-fps').textContent = d.fps || '--';
+                document.getElementById('perf-info').textContent = (d.fps || '--') + ' fps | ' + (d.detect_ms || '--') + ' ms';
+
+                document.getElementById('dot-cam').className = 'sys-dot ' + (d.camera_ok ? 'on' : 'off');
+                document.getElementById('dot-ai').className = 'sys-dot ' + (d.ai_loaded ? 'on' : 'off');
+                document.getElementById('dot-gpio').className = 'sys-dot ' + (d.gpio_ok ? 'on' : 'off');
+
+                // 繪製探索地圖
+                if (d.heat_map) drawMap(d.heat_map);
+
+                // 回溯按鈕
+                const btBtn = document.getElementById('btn-backtrack');
+                if (btBtn) {
+                    if (stage === 'BACKTRACK') {
+                        btBtn.style.display = 'block';
+                        btBtn.textContent = '回溯中... (' + (d.backtrack_steps||0) + ' 步)';
+                        btBtn.disabled = true;
+                        btBtn.style.opacity = '0.6';
+                    } else if ((stage === 'REPORT' || stage === 'STANDBY' || d.mode === 'manual') && (d.backtrack_steps||0) > 0) {
+                        btBtn.style.display = 'block';
+                        btBtn.textContent = '返回出發點 (' + d.backtrack_steps + ' 步)';
+                        btBtn.disabled = false;
+                        btBtn.style.opacity = '1';
+                    } else {
+                        btBtn.style.display = 'none';
+                    }
+                }
+
+                // 對講面板狀態
+                const icBtn = document.getElementById('btn-intercom');
+                const icPnl = document.getElementById('intercom-panel');
+                if (icBtn && icPnl) {
+                    const icOn = d.intercom_active;
+                    icBtn.style.background = icOn ? '#8e44ad' : '';
+                    icBtn.style.color = icOn ? '#fff' : '';
+                    icBtn.textContent = icOn ? '關閉對講' : '開啟對講';
+                    icPnl.style.display = icOn ? 'block' : 'none';
+                    if (icOn) loadPresets();
+                }
+
+                if (d.logs && d.logs.length > 0) {
+                    const ls = document.getElementById('log-ls');
+                    if (d.logs.length !== prevLogLen) {
+                        prevLogLen = d.logs.length;
+                        document.getElementById('log-cnt').textContent = d.logs.length + ' 筆';
+                        ls.innerHTML = '';
+                        d.logs.forEach(l => {
+                            const e = document.createElement('div'); e.className = 'log-e';
+                            const lvc = { 'info': 'lv-info', 'warn': 'lv-warn', 'danger': 'lv-danger' }[l.level] || 'lv-info';
+                            const lvt = { 'info': 'INFO', 'warn': 'WARN', 'danger': 'ALERT' }[l.level] || 'INFO';
+                            e.innerHTML = '<span class="log-tm">' + l.time + '</span><span class="log-lv ' + lvc + '">' + lvt + '</span><span class="log-mg">' + l.msg + '</span>';
+                            ls.appendChild(e);
+                        });
+                    }
+                }
+            }).catch(() => { });
+        }
+        setInterval(poll, 600);
+        poll();
+
+        // === Exploration Map ===
+        function drawMap(hm) {
+            if (!mapOpen) return;
+            if (window._expMap) window._expMap.update(hm);
+            const covEl = document.getElementById('map-coverage');
+            if (covEl && hm) covEl.textContent = (hm.coverage || 0) + '%';
+        }
+
+        // === Intercom ===
+        let icPresetsLoaded = false;
+        let icListening = false;
+        let icListenTimer = null;
+        let icAudioCtx = null;
+
+        function toggleListen() {
+            icListening = !icListening;
+            const btn = document.getElementById('btn-listen');
+            if (icListening) {
+                btn.style.background = '#27ae60';
+                btn.style.color = '#fff';
+                btn.textContent = '收音 ON';
+                icAudioCtx = icAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                icListenLoop();
+            } else {
+                btn.style.background = '';
+                btn.style.color = '';
+                btn.textContent = '收音 OFF';
+                if (icListenTimer) { clearTimeout(icListenTimer); icListenTimer = null; }
+            }
+        }
+
+        async function icListenLoop() {
+            if (!icListening) return;
+            try {
+                const resp = await fetch('/intercom/listen?t=' + Date.now());
+                if (resp.ok && resp.status === 200) {
+                    const ab = await resp.arrayBuffer();
+                    if (ab.byteLength > 44) {
+                        const audioBuf = await icAudioCtx.decodeAudioData(ab);
+                        const src = icAudioCtx.createBufferSource();
+                        src.buffer = audioBuf;
+                        src.connect(icAudioCtx.destination);
+                        src.start();
+                    }
+                }
+            } catch (e) { /* ignore */ }
+            icListenTimer = setTimeout(icListenLoop, 500);
+        }
+
+        function icSpeak() {
+            const text = document.getElementById('ic-text').value.trim();
+            if (!text) return;
+            fetch('/control', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({action:'intercom_speak', text: text})
+            }).catch(()=>{});
+            document.getElementById('ic-text').value = '';
+        }
+
+        // Enter 鍵發送
+        document.addEventListener('DOMContentLoaded', () => {
+            const inp = document.getElementById('ic-text');
+            if (inp) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') icSpeak(); });
+        });
+
+        function loadPresets() {
+            if (icPresetsLoaded) return;
+            fetch('/intercom/presets').then(r=>r.json()).then(list => {
+                const el = document.getElementById('ic-presets');
+                if (!el) return;
+                el.innerHTML = '';
+                list.forEach(msg => {
+                    const b = document.createElement('button');
+                    b.className = 'btn';
+                    b.style.cssText = 'padding:4px 8px;font-size:.6rem;width:auto;white-space:nowrap;';
+                    b.textContent = msg.length > 12 ? msg.substring(0,12)+'...' : msg;
+                    b.title = msg;
+                    b.onclick = () => {
+                        fetch('/control', { method:'POST', headers:{'Content-Type':'application/json'},
+                            body: JSON.stringify({action:'intercom_speak', text: msg})
+                        }).catch(()=>{});
+                    };
+                    el.appendChild(b);
+                });
+                icPresetsLoaded = true;
+            }).catch(()=>{});
+        }
+    </script>
+
+</body>
+
+</html>

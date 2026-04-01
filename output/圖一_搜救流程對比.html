@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head><meta charset="UTF-8"><title>圖(一)</title>
+<style>body{background:#fff;margin:0;padding:20px;font-family:'Microsoft JhengHei',sans-serif;}</style></head>
+<body>
+<svg viewBox="0 0 800 340" xmlns="http://www.w3.org/2000/svg" style="max-width:780px;margin:0 auto;display:block;">
+<defs>
+  <marker id="a" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#333" stroke-width="1"/></marker>
+</defs>
+
+<text x="400" y="22" text-anchor="middle" font-size="13" font-weight="bold">圖(一) 傳統搜救流程與本系統自主搜救流程對比示意圖</text>
+
+<!-- 傳統搜救 -->
+<text x="50" y="58" font-size="11" font-weight="bold">傳統搜救流程</text>
+<rect x="50" y="70" width="100" height="42" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="100" y="88" text-anchor="middle" font-size="9" font-weight="bold">災害發生</text>
+<text x="100" y="101" text-anchor="middle" font-size="7.5" fill="#666">建物倒塌</text>
+
+<line x1="150" y1="91" x2="185" y2="91" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="187" y="70" width="100" height="42" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="237" y="88" text-anchor="middle" font-size="9" font-weight="bold">人工搜索</text>
+<text x="237" y="101" text-anchor="middle" font-size="7.5" fill="#666">搜救犬/人力</text>
+
+<line x1="287" y1="91" x2="322" y2="91" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="324" y="70" width="100" height="42" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="374" y="88" text-anchor="middle" font-size="9" font-weight="bold">目視確認</text>
+<text x="374" y="101" text-anchor="middle" font-size="7.5" fill="#666">進入危險區域</text>
+
+<line x1="424" y1="91" x2="459" y2="91" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="461" y="70" width="100" height="42" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="511" y="88" text-anchor="middle" font-size="9" font-weight="bold">呼叫救援</text>
+<text x="511" y="101" text-anchor="middle" font-size="7.5" fill="#666">人工回報</text>
+
+<line x1="561" y1="91" x2="596" y2="91" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="598" y="70" width="100" height="42" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="648" y="88" text-anchor="middle" font-size="9" font-weight="bold">救出傷患</text>
+<text x="648" y="101" text-anchor="middle" font-size="7.5" fill="#666">耗時 / 高風險</text>
+
+<!-- 痛點標記 -->
+<text x="240" y="128" text-anchor="middle" font-size="7" fill="#c0392b">耗時長、人力密集</text>
+<text x="377" y="128" text-anchor="middle" font-size="7" fill="#c0392b">搜救員安全風險高</text>
+<text x="514" y="128" text-anchor="middle" font-size="7" fill="#c0392b">資訊傳遞慢</text>
+
+<!-- 分隔線 -->
+<line x1="50" y1="148" x2="750" y2="148" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,3"/>
+
+<!-- 本系統 -->
+<text x="50" y="178" font-size="11" font-weight="bold">本系統自主搜救流程</text>
+<rect x="50" y="190" width="100" height="42" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="100" y="208" text-anchor="middle" font-size="9" font-weight="bold">災害發生</text>
+<text x="100" y="221" text-anchor="middle" font-size="7.5" fill="#666">建物倒塌</text>
+
+<line x1="150" y1="211" x2="185" y2="211" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="187" y="190" width="110" height="42" rx="4" fill="#f0f0f0" stroke="#333" stroke-width="1.5"/>
+<text x="242" y="208" text-anchor="middle" font-size="9" font-weight="bold">機器人巡邏</text>
+<text x="242" y="221" text-anchor="middle" font-size="7.5" fill="#666">自主避障 / 全向移動</text>
+
+<line x1="297" y1="211" x2="332" y2="211" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="334" y="190" width="110" height="42" rx="4" fill="#f0f0f0" stroke="#333" stroke-width="1.5"/>
+<text x="389" y="208" text-anchor="middle" font-size="9" font-weight="bold">AI 偵測</text>
+<text x="389" y="221" text-anchor="middle" font-size="7.5" fill="#666">YOLOv8 + 姿態 + rPPG</text>
+
+<line x1="444" y1="211" x2="479" y2="211" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="481" y="190" width="110" height="42" rx="4" fill="#f0f0f0" stroke="#333" stroke-width="1.5"/>
+<text x="536" y="208" text-anchor="middle" font-size="9" font-weight="bold">語音互動</text>
+<text x="536" y="221" text-anchor="middle" font-size="7.5" fill="#666">TTS 問詢 / STT 辨識</text>
+
+<line x1="591" y1="211" x2="626" y2="211" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<rect x="628" y="190" width="110" height="42" rx="4" fill="#f0f0f0" stroke="#333" stroke-width="1.5"/>
+<text x="683" y="208" text-anchor="middle" font-size="9" font-weight="bold">自動通報</text>
+<text x="683" y="221" text-anchor="middle" font-size="7.5" fill="#666">Telegram + 座標</text>
+
+<!-- 優勢標記 -->
+<text x="242" y="248" text-anchor="middle" font-size="7" fill="#27ae60">無需人員進入</text>
+<text x="389" y="248" text-anchor="middle" font-size="7" fill="#27ae60">即時多模態偵測</text>
+<text x="536" y="248" text-anchor="middle" font-size="7" fill="#27ae60">主動確認傷勢</text>
+<text x="683" y="248" text-anchor="middle" font-size="7" fill="#27ae60">秒級資訊傳遞</text>
+
+<!-- 時間對比 -->
+<rect x="50" y="270" width="700" height="50" rx="6" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+<text x="70" y="290" font-size="9" fill="#333" font-weight="bold">時間對比</text>
+<text x="70" y="308" font-size="8" fill="#666">傳統搜救：數小時～數天（依人力與環境）</text>
+<text x="400" y="308" font-size="8" fill="#666">本系統：分鐘級自動偵測 + 秒級即時通報</text>
+</svg>
+</body></html>

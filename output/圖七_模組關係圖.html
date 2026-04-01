@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head><meta charset="UTF-8"><title>圖(七)</title>
+<style>body{background:#fff;margin:0;padding:20px;font-family:'Microsoft JhengHei',sans-serif;}</style></head>
+<body>
+<svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;margin:0 auto;display:block;">
+<defs>
+  <marker id="a" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#333" stroke-width="1"/></marker>
+  <marker id="ad" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#aaa" stroke-width="1"/></marker>
+</defs>
+
+<text x="390" y="22" text-anchor="middle" font-size="13" font-weight="bold">圖(七) 各個模組之關係圖</text>
+
+<!-- 學習步驟編號 -->
+<!-- (1) 樹莓派 + GPIO -->
+<rect x="20" y="50" width="170" height="85" rx="6" fill="#f5f5f5" stroke="#222" stroke-width="1.5"/>
+<text x="105" y="70" text-anchor="middle" font-size="9" font-weight="bold">(1) 樹莓派 + GPIO</text>
+<line x1="30" y1="78" x2="180" y2="78" stroke="#ddd" stroke-width="0.5"/>
+<text x="105" y="93" text-anchor="middle" font-size="7.5" fill="#555">Linux 系統操作</text>
+<text x="105" y="106" text-anchor="middle" font-size="7.5" fill="#555">Python + gpiozero</text>
+<text x="105" y="119" text-anchor="middle" font-size="7.5" fill="#555">motor.py / servo.py / ultrasonic.py</text>
+
+<!-- (2) YOLOv8 + Hailo -->
+<rect x="210" y="50" width="170" height="85" rx="6" fill="#f5f5f5" stroke="#222" stroke-width="1.5"/>
+<text x="295" y="70" text-anchor="middle" font-size="9" font-weight="bold">(2) AI 偵測 + NPU</text>
+<line x1="220" y1="78" x2="370" y2="78" stroke="#ddd" stroke-width="0.5"/>
+<text x="295" y="93" text-anchor="middle" font-size="7.5" fill="#555">YOLOv8 (ultralytics)</text>
+<text x="295" y="106" text-anchor="middle" font-size="7.5" fill="#555">Hailo SDK (HEF 編譯)</text>
+<text x="295" y="119" text-anchor="middle" font-size="7.5" fill="#555">detector.py / tracker.py</text>
+
+<!-- (3) Flask + 前端 -->
+<rect x="400" y="50" width="170" height="85" rx="6" fill="#f5f5f5" stroke="#222" stroke-width="1.5"/>
+<text x="485" y="70" text-anchor="middle" font-size="9" font-weight="bold">(3) Web + 前端</text>
+<line x1="410" y1="78" x2="560" y2="78" stroke="#ddd" stroke-width="0.5"/>
+<text x="485" y="93" text-anchor="middle" font-size="7.5" fill="#555">Flask RESTful API</text>
+<text x="485" y="106" text-anchor="middle" font-size="7.5" fill="#555">MJPEG 串流</text>
+<text x="485" y="119" text-anchor="middle" font-size="7.5" fill="#555">index.html / nipplejs</text>
+
+<!-- (4) 多模態整合 -->
+<rect x="590" y="50" width="170" height="85" rx="6" fill="#f5f5f5" stroke="#222" stroke-width="1.5"/>
+<text x="675" y="70" text-anchor="middle" font-size="9" font-weight="bold">(4) 多模態整合</text>
+<line x1="600" y1="78" x2="750" y2="78" stroke="#ddd" stroke-width="0.5"/>
+<text x="675" y="93" text-anchor="middle" font-size="7.5" fill="#555">音訊 FFT / VAD</text>
+<text x="675" y="106" text-anchor="middle" font-size="7.5" fill="#555">rPPG 心率估算</text>
+<text x="675" y="119" text-anchor="middle" font-size="7.5" fill="#555">fusion.py / rppg.py</text>
+
+<!-- 箭頭：學習順序 -->
+<line x1="190" y1="92" x2="208" y2="92" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+<line x1="380" y1="92" x2="398" y2="92" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+<line x1="570" y1="92" x2="588" y2="92" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- 中間整合層 -->
+<rect x="140" y="175" width="500" height="50" rx="8" fill="#e8e8e8" stroke="#222" stroke-width="1.8"/>
+<text x="390" y="198" text-anchor="middle" font-size="11" font-weight="bold">app.py — 系統整合 (Flask + 4 背景執行緒)</text>
+<text x="390" y="215" text-anchor="middle" font-size="8" fill="#555">config.py 集中管理所有參數</text>
+
+<!-- 學習步驟 → 整合層 -->
+<line x1="105" y1="135" x2="250" y2="173" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<line x1="295" y1="135" x2="330" y2="173" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<line x1="485" y1="135" x2="450" y2="173" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+<line x1="675" y1="135" x2="530" y2="173" stroke="#333" stroke-width="1" marker-end="url(#a)"/>
+
+<!-- 下方：功能模組 -->
+<rect x="30" y="265" width="140" height="65" rx="5" fill="#fafafa" stroke="#333" stroke-width="1.2"/>
+<text x="100" y="288" text-anchor="middle" font-size="9" font-weight="bold">影像處理</text>
+<text x="100" y="303" text-anchor="middle" font-size="7" fill="#555">camera.py</text>
+<text x="100" y="316" text-anchor="middle" font-size="7" fill="#555">CLAHE 低光增強</text>
+
+<rect x="190" y="265" width="140" height="65" rx="5" fill="#fafafa" stroke="#333" stroke-width="1.2"/>
+<text x="260" y="288" text-anchor="middle" font-size="9" font-weight="bold">姿態分析</text>
+<text x="260" y="303" text-anchor="middle" font-size="7" fill="#555">倒地 / 蜷縮 / 不適</text>
+<text x="260" y="316" text-anchor="middle" font-size="7" fill="#555">揮手偵測 / 閉眼偵測</text>
+
+<rect x="350" y="265" width="140" height="65" rx="5" fill="#fafafa" stroke="#333" stroke-width="1.2"/>
+<text x="420" y="288" text-anchor="middle" font-size="9" font-weight="bold">決策引擎</text>
+<text x="420" y="303" text-anchor="middle" font-size="7" fill="#555">VictimScore 融合</text>
+<text x="420" y="316" text-anchor="middle" font-size="7" fill="#555">7 階段狀態機</text>
+
+<rect x="510" y="265" width="140" height="65" rx="5" fill="#fafafa" stroke="#333" stroke-width="1.2"/>
+<text x="580" y="288" text-anchor="middle" font-size="9" font-weight="bold">巡邏策略</text>
+<text x="580" y="303" text-anchor="middle" font-size="7" fill="#555">smart_patrol / scan_patrol</text>
+<text x="580" y="316" text-anchor="middle" font-size="7" fill="#555">heat_map 探索記憶</text>
+
+<!-- 整合層 → 功能模組 -->
+<line x1="250" y1="225" x2="100" y2="263" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="330" y1="225" x2="260" y2="263" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="450" y1="225" x2="420" y2="263" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="530" y1="225" x2="580" y2="263" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+
+<!-- 底部：輸出 -->
+<rect x="80" y="375" width="130" height="50" rx="5" fill="#f0f0f0" stroke="#333" stroke-width="1.2"/>
+<text x="145" y="398" text-anchor="middle" font-size="9" font-weight="bold">Telegram 通知</text>
+<text x="145" y="415" text-anchor="middle" font-size="7" fill="#555">照片 + 座標 + 分數</text>
+
+<rect x="240" y="375" width="130" height="50" rx="5" fill="#f0f0f0" stroke="#333" stroke-width="1.2"/>
+<text x="305" y="398" text-anchor="middle" font-size="9" font-weight="bold">語音警報</text>
+<text x="305" y="415" text-anchor="middle" font-size="7" fill="#555">TTS + alert.wav</text>
+
+<rect x="400" y="375" width="130" height="50" rx="5" fill="#f0f0f0" stroke="#333" stroke-width="1.2"/>
+<text x="465" y="398" text-anchor="middle" font-size="9" font-weight="bold">事件記錄</text>
+<text x="465" y="415" text-anchor="middle" font-size="7" fill="#555">截圖 + JSON</text>
+
+<rect x="560" y="375" width="130" height="50" rx="5" fill="#f0f0f0" stroke="#333" stroke-width="1.2"/>
+<text x="625" y="398" text-anchor="middle" font-size="9" font-weight="bold">Web 地圖</text>
+<text x="625" y="415" text-anchor="middle" font-size="7" fill="#555">路線 / 障礙 / 人員</text>
+
+<line x1="420" y1="330" x2="145" y2="373" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="420" y1="330" x2="305" y2="373" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="420" y1="330" x2="465" y2="373" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="580" y1="330" x2="625" y2="373" stroke="#333" stroke-width="0.8" marker-end="url(#a)"/>
+
+<!-- 底部標註 -->
+<rect x="80" y="450" width="610" height="30" rx="4" fill="#fafafa" stroke="#ddd" stroke-width="0.8"/>
+<text x="390" y="470" text-anchor="middle" font-size="8" fill="#888">所有模組皆透過 config.py 集中管理參數，app.py 統一初始化並以執行緒池協調運行</text>
+</svg>
+</body></html>

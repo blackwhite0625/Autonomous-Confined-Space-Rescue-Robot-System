@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head><meta charset="UTF-8"><title>圖(六)</title>
+<style>body{background:#fff;margin:0;padding:20px;font-family:'Microsoft JhengHei',sans-serif;}</style></head>
+<body>
+<svg viewBox="0 0 650 520" xmlns="http://www.w3.org/2000/svg" style="max-width:630px;margin:0 auto;display:block;">
+<defs>
+  <marker id="a" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#333" stroke-width="1"/></marker>
+  <marker id="ay" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#27ae60" stroke-width="1"/></marker>
+  <marker id="an" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#c0392b" stroke-width="1"/></marker>
+</defs>
+
+<text x="325" y="22" text-anchor="middle" font-size="13" font-weight="bold">圖(六) HRI 人機互動流程示意圖</text>
+
+<!-- 進入 INQUIRY -->
+<rect x="220" y="45" width="200" height="40" rx="20" fill="#f3e5f5" stroke="#8e44ad" stroke-width="1.5"/>
+<text x="320" y="70" text-anchor="middle" font-size="10" font-weight="bold">進入 INQUIRY 階段</text>
+
+<line x1="320" y1="85" x2="320" y2="105" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- Round 1 -->
+<rect x="150" y="108" width="340" height="45" rx="6" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="170" y="127" font-size="8" font-weight="bold" fill="#8e44ad">第一輪</text>
+<text x="320" y="127" text-anchor="middle" font-size="9" font-weight="bold">TTS 播放:「有人被困嗎? 請回應或發出聲音」</text>
+<text x="320" y="143" text-anchor="middle" font-size="7.5" fill="#666">喇叭 → 受困者</text>
+
+<line x1="320" y1="153" x2="320" y2="173" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- Listen 1 -->
+<rect x="200" y="175" width="240" height="40" rx="6" fill="#fff" stroke="#333" stroke-width="1.2"/>
+<text x="320" y="195" text-anchor="middle" font-size="9" font-weight="bold">麥克風收音 3 秒</text>
+<text x="320" y="208" text-anchor="middle" font-size="7" fill="#666">VAD + 呼救聲偵測 + STT 關鍵字辨識</text>
+
+<line x1="320" y1="215" x2="320" y2="235" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- Analysis 1 -->
+<rect x="175" y="237" width="290" height="35" rx="4" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+<text x="320" y="255" text-anchor="middle" font-size="8" fill="#555">語音偵測 → +0.4 | 呼救分數 > 0.5 → +0.3 | 敲擊偵測 → +0.3</text>
+<text x="320" y="267" text-anchor="middle" font-size="7" fill="#888">motion_response_score 累加</text>
+
+<line x1="320" y1="272" x2="320" y2="292" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- Round 2 -->
+<rect x="150" y="295" width="340" height="45" rx="6" fill="#f5f5f5" stroke="#333" stroke-width="1.2"/>
+<text x="170" y="314" font-size="8" font-weight="bold" fill="#8e44ad">第二輪</text>
+<text x="320" y="314" text-anchor="middle" font-size="9" font-weight="bold">TTS 播放:「如果可以移動，請揮手或敲擊物品」</text>
+<text x="320" y="330" text-anchor="middle" font-size="7.5" fill="#666">喇叭 → 受困者</text>
+
+<line x1="320" y1="340" x2="320" y2="360" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- Listen 2 -->
+<rect x="200" y="362" width="240" height="40" rx="6" fill="#fff" stroke="#333" stroke-width="1.2"/>
+<text x="320" y="382" text-anchor="middle" font-size="9" font-weight="bold">麥克風收音 3 秒</text>
+<text x="320" y="395" text-anchor="middle" font-size="7" fill="#666">揮手動作偵測 + 音訊分析</text>
+
+<line x1="320" y1="402" x2="320" y2="422" stroke="#333" stroke-width="1.2" marker-end="url(#a)"/>
+
+<!-- Decision -->
+<polygon points="320,425 415,455 320,485 225,455" fill="#fff" stroke="#333" stroke-width="1.2"/>
+<text x="320" y="458" text-anchor="middle" font-size="8" font-weight="bold">回應分數 > 0.3?</text>
+
+<!-- Yes -->
+<line x1="415" y1="455" x2="520" y2="455" stroke="#27ae60" stroke-width="1.2" marker-end="url(#ay)"/>
+<text x="468" y="448" font-size="8" fill="#27ae60" font-weight="bold">是</text>
+<rect x="522" y="438" width="110" height="35" rx="6" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
+<text x="577" y="460" text-anchor="middle" font-size="9" font-weight="bold" fill="#27ae60">→ CONFIRM</text>
+
+<!-- No -->
+<line x1="225" y1="455" x2="120" y2="455" stroke="#c0392b" stroke-width="1.2" marker-end="url(#an)"/>
+<text x="172" y="448" font-size="8" fill="#c0392b" font-weight="bold">否</text>
+<rect x="15" y="438" width="110" height="35" rx="6" fill="#fde8e8" stroke="#c0392b" stroke-width="1.5"/>
+<text x="70" y="453" text-anchor="middle" font-size="8" font-weight="bold" fill="#c0392b">倒地+無回應</text>
+<text x="70" y="467" text-anchor="middle" font-size="7" fill="#c0392b">→ 疑似昏迷通報</text>
+
+<!-- Side: keyword detection -->
+<rect x="510" y="175" width="120" height="55" rx="5" fill="#fff3e0" stroke="#e67e22" stroke-width="1.2"/>
+<text x="570" y="196" text-anchor="middle" font-size="8" font-weight="bold" fill="#e67e22">STT 關鍵字</text>
+<text x="570" y="210" text-anchor="middle" font-size="7" fill="#666">「救命」「help」</text>
+<text x="570" y="222" text-anchor="middle" font-size="7" fill="#666">「幫忙」「危險」</text>
+<line x1="440" y1="195" x2="508" y2="195" stroke="#e67e22" stroke-width="0.8" stroke-dasharray="3,2" marker-end="url(#a)"/>
+</svg>
+</body></html>

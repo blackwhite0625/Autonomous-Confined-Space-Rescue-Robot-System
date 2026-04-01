@@ -1,0 +1,40 @@
+GPIO 接腳配置
+
+## 舵機 (攝影機雲台)
+| 舵機 | 功能 | GPIO | 預設角度 | 範圍 |
+|------|------|------|----------|------|
+| Pan | 水平旋轉 | GPIO 24 | -12.9° | -90° ~ +90° |
+| Tilt | 垂直傾斜 | GPIO 25 | 45.0° | -90° ~ +90° |
+
+## 超聲波感測器 (HC-SR04)
+| Trigger | GPIO 4 | 觸發訊號 |
+| Echo | GPIO 21 | 回波訊號 |
+
+## Telegram 通知
+| Bot Token | 8307639789:AAFmPTmHn2rLmQUfw6ld6qwjRVCF8RYqZqA |
+| Chat ID | 5844353390 |
+
+## 相機設定
+| 相機索引 | 0 |
+| 解析度 | 640 x 480 |
+| FPS | 30 |
+
+## 馬達L298N接線圖
+L298N 驅動板 A (前輪)
+├── IN1 → GPIO 6 (FL Forward)
+├── IN2 → GPIO 5 (FL Backward)
+├── ENA → GPIO 12 (FL PWM)
+├── IN3 → GPIO 19 (FR Forward)
+├── IN4 → GPIO 13 (FR Backward)
+└── ENB → GPIO 26 (FR PWM)
+
+L298N 驅動板 B (後輪)
+├── IN1 → GPIO 27 (RL Forward)
+├── IN2 → GPIO 17 (RL Backward)
+├── ENA → GPIO 16 (RL PWM)
+├── IN3 → GPIO 23 (RR Forward)
+├── IN4 → GPIO 22 (RR Backward)
+└── ENB → GPIO 20 (RR PWM)
+
+
+

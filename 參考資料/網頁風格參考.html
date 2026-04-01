@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CarBot 控制台</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f0eb;
+            --card: #ffffff;
+            --border: #e0dbd5;
+            --text: #1a1a1a;
+            --dim: #888580;
+            --blue: #1a1a1a;
+            --green: #1a1a1a;
+            --red: #1a1a1a;
+            --orange: #1a1a1a;
+            --purple: #1a1a1a;
+            --accent: #1a1a1a;
+            --danger: #c0392b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 頂部列 */
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .state-badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: #1a1a1a;
+            color: #f5f0eb;
+            border: none;
+        }
+
+        .badge-patrol {
+            background: #1a1a1a;
+            color: #f5f0eb;
+        }
+
+        .badge-monitor {
+            background: #555;
+            color: #f5f0eb;
+        }
+
+        .badge-alert {
+            background: var(--orange);
+            color: #fff;
+            animation: flash 1s infinite;
+        }
+
+        .badge-rescue {
+            background: var(--danger);
+            color: #fff;
+            animation: flash 0.3s infinite;
+        }
+
+        .badge-manual {
+            background: #333;
+            color: #f5f0eb;
+        }
+
+        @keyframes flash {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* 主內容 */
+        .main {
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 影像 */
+        .video-box {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .video-box img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+
+        .video-label {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+        }
+
+        /* 數據格 */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-lbl {
+            font-size: 0.6rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+        }
+
+        .c-blue {
+            color: #1a1a1a;
+        }
+
+        .c-green {
+            color: #1a1a1a;
+        }
+
+        .c-red {
+            color: var(--danger);
+        }
+
+        .c-orange {
+            color: #555;
+        }
+
+        /* 控制區 */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .panel-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* 搖桿 */
+        .joy-area {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto;
+            position: relative;
+            background: radial-gradient(circle, #eae5df 0%, #ddd8d2 100%);
+            border-radius: 50%;
+            border: 2px solid var(--border);
+        }
+
+        /* 按鈕 */
+        .btns {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--card);
+            color: var(--dim);
+        }
+
+        .btn:hover {
+            filter: brightness(0.95);
+        }
+
+        .btn-auto {
+            color: #1a1a1a;
+            border-color: var(--border);
+        }
+
+        .btn-manual {
+            color: #1a1a1a;
+            border-color: var(--border);
+        }
+
+        .btn-stop {
+            color: var(--danger);
+            border-color: rgba(192, 57, 43, 0.3);
+        }
+
+        .btn-home {
+            color: #555;
+            border-color: var(--border);
+        }
+
+        .btn.active {
+            color: #fff;
+        }
+
+        .btn-auto.active {
+            background: #1a1a1a;
+            border-color: #1a1a1a;
+        }
+
+        .btn-manual.active {
+            background: #333;
+            border-color: #333;
+        }
+
+        /* 雲台開關 */
+        .servo-section {
+            margin-top: 4px;
+        }
+
+        .servo-toggle {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--card);
+            color: #555;
+            text-align: center;
+        }
+
+        .servo-toggle:hover {
+            filter: brightness(0.95);
+        }
+
+        .servo-toggle.active {
+            background: #1a1a1a;
+            color: #f5f0eb;
+            border-color: #1a1a1a;
+        }
+
+        .servo-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, opacity 0.25s ease;
+            opacity: 0;
+        }
+
+        .servo-panel.open {
+            max-height: 280px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        .servo-info {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--dim);
+            margin-top: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 日誌 */
+        .log-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .log-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+        }
+
+        .log-list {
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 0.75rem;
+            color: var(--dim);
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .log-msg {
+            color: var(--red);
+        }
+
+        /* RWD */
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>CarBot</h1>
+        <div id="state-badge" class="state-badge badge-patrol">
+            <span id="state-text">PATROL</span>
+        </div>
+    </header>
+
+    <main class="main">
+
+        <!-- 影像 -->
+        <div class="video-box">
+            <img id="video-stream" src="/video_feed" alt="Live">
+            <span class="video-label">LIVE</span>
+        </div>
+
+        <!-- 數據 -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-val c-blue" id="person-count">0</div>
+                <div class="stat-lbl">人數</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val c-green" id="distance">--</div>
+                <div class="stat-lbl">距離 cm</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val c-green" id="knife-status">SAFE</div>
+                <div class="stat-lbl">刀具</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val c-green" id="fallen-count">0</div>
+                <div class="stat-lbl">倒地</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val c-blue" id="alert-count">0</div>
+                <div class="stat-lbl">警報</div>
+            </div>
+        </div>
+
+        <!-- 控制 -->
+        <div class="controls">
+            <div class="panel">
+                <div class="panel-title">Movement</div>
+                <div id="joystick-zone" class="joy-area"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-title">Mode</div>
+                <div class="btns">
+                    <button id="btn-auto" class="btn btn-auto active" onclick="setMode('auto')">Auto Patrol</button>
+                    <button id="btn-manual" class="btn btn-manual" onclick="setMode('manual')">Manual</button>
+                    <button class="btn btn-stop" onclick="emergencyStop()">Stop</button>
+                    <button class="btn btn-home" onclick="servoHome()">Gimbal Home</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 雲台 -->
+        <div class="servo-section">
+            <button id="servo-toggle-btn" class="servo-toggle" onclick="toggleServoPanel()">Gimbal Control
+                (OFF)</button>
+            <div id="servo-panel" class="servo-panel">
+                <div class="panel-title" style="margin-top:12px;">Gimbal</div>
+                <div id="servo-joystick-zone" class="joy-area"></div>
+                <div class="servo-info" id="servo-angle-display">Pan: 0 | Tilt: 0</div>
+            </div>
+        </div>
+
+        <!-- 日誌 -->
+        <div class="log-box">
+            <div class="log-title">Alert Log</div>
+            <div class="log-list" id="log-list">
+                <div class="log-entry">
+                    <span class="log-time">--:--:--</span>
+                    <span style="color:var(--dim);">System standby</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // === Movement Joystick ===
+        const joystick = nipplejs.create({
+            zone: document.getElementById('joystick-zone'),
+            mode: 'static',
+            position: { left: '50%', top: '50%' },
+            color: '#333',
+            size: 110
+        });
+
+        let joyX = 0, joyY = 0, lastSX = null, lastSY = null;
+
+        joystick.on('move', (e, d) => { joyX = d.vector.x; joyY = d.vector.y; });
+        joystick.on('end', () => { joyX = 0; joyY = 0; sendMove(0, 0); });
+
+        setInterval(() => {
+            const rx = Math.round(joyX * 100) / 100;
+            const ry = Math.round(joyY * 100) / 100;
+            if (rx !== lastSX || ry !== lastSY) {
+                lastSX = rx; lastSY = ry;
+                sendMove(rx, ry);
+            }
+        }, 80);
+
+        function sendMove(vx, vy) {
+            fetch('/control', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'move', vx, vy })
+            }).catch(() => { });
+        }
+
+        // === Servo Joystick ===
+        let servoJoystick = null, servoPanelOpen = false;
+        let sX = 0, sY = 0, lastSP = null, lastST = null;
+
+        function toggleServoPanel() {
+            servoPanelOpen = !servoPanelOpen;
+            const panel = document.getElementById('servo-panel');
+            const btn = document.getElementById('servo-toggle-btn');
+            if (servoPanelOpen) {
+                panel.classList.add('open');
+                btn.classList.add('active');
+                btn.textContent = 'Gimbal Control (ON)';
+                setTimeout(initServoJoy, 350);
+            } else {
+                panel.classList.remove('open');
+                btn.classList.remove('active');
+                btn.textContent = 'Gimbal Control (OFF)';
+                destroyServoJoy();
+            }
+        }
+
+        function initServoJoy() {
+            if (servoJoystick) return;
+            servoJoystick = nipplejs.create({
+                zone: document.getElementById('servo-joystick-zone'),
+                mode: 'static',
+                position: { left: '50%', top: '50%' },
+                color: '#555',
+                size: 110
+            });
+            servoJoystick.on('move', (e, d) => { sX = d.vector.x; sY = d.vector.y; });
+            servoJoystick.on('end', () => { sX = 0; sY = 0; });
+        }
+
+        function destroyServoJoy() {
+            if (servoJoystick) { servoJoystick.destroy(); servoJoystick = null; }
+            sX = 0; sY = 0; lastSP = null; lastST = null;
+        }
+
+        setInterval(() => {
+            if (!servoPanelOpen) return;
+
+            // 回歸原始絕對映射邏輯 (依據搖桿方向與推力決定角度)
+            const rx = Math.round(sX * 100) / 100;
+            const ry = Math.round(sY * 100) / 100;
+
+            const pan = Math.round(rx * 90);
+            const tilt = Math.round(-ry * 90); // Y軸反向對應雲台直覺
+
+            if (pan !== lastSP || tilt !== lastST) {
+                lastSP = pan; lastST = tilt;
+                document.getElementById('servo-angle-display').textContent = `Pan: ${pan} | Tilt: ${tilt}`;
+                fetch('/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'servo', pan, tilt })
+                }).catch(() => { });
+            }
+        }, 80);
+
+        // === Mode ===
+        function setMode(m) {
+            fetch('/control', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: m === 'manual' ? 'mode_manual' : 'mode_auto' })
+            }).catch(() => { });
+        }
+
+        function emergencyStop() {
+            fetch('/control', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stop' })
+            }).catch(() => { });
+        }
+
+        function servoHome() {
+            fetch('/control', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'home' })
+            }).catch(() => { });
+        }
+
+        // === Status Polling ===
+        const stateMap = { PATROL: 'PATROL', MONITOR: 'MONITOR', ALERT: 'ALERT', RESCUE: 'RESCUE', MANUAL: 'MANUAL' };
+        const classMap = { PATROL: 'badge-patrol', MONITOR: 'badge-monitor', ALERT: 'badge-alert', RESCUE: 'badge-rescue', MANUAL: 'badge-manual' };
+
+        let prevKnife = false, prevFallen = 0, prevAlert = 0;
+
+        function updateStatus() {
+            fetch('/status').then(r => r.json()).then(d => {
+                // State badge
+                document.getElementById('state-badge').className = 'state-badge ' + (classMap[d.state] || 'badge-patrol');
+                document.getElementById('state-text').textContent = stateMap[d.state] || d.state;
+
+                // Buttons
+                document.getElementById('btn-auto').classList.toggle('active', d.state !== 'MANUAL');
+                document.getElementById('btn-manual').classList.toggle('active', d.state === 'MANUAL');
+
+                // Stats
+                const pc = document.getElementById('person-count');
+                pc.textContent = d.person_count;
+                pc.className = 'stat-val ' + (d.person_count >= 5 ? 'c-red' : 'c-blue');
+
+                const dist = document.getElementById('distance');
+                dist.textContent = d.distance_cm;
+                dist.className = 'stat-val ' + (d.distance_cm < 30 ? 'c-red' : d.distance_cm < 50 ? 'c-orange' : 'c-green');
+
+                const knife = document.getElementById('knife-status');
+                knife.textContent = d.knife_detected ? 'DANGER' : 'SAFE';
+                knife.className = 'stat-val ' + (d.knife_detected ? 'c-red' : 'c-green');
+
+                const fallen = document.getElementById('fallen-count');
+                fallen.textContent = d.fallen_count;
+                fallen.className = 'stat-val ' + (d.fallen_count > 0 ? 'c-red' : 'c-blue');
+
+                document.getElementById('alert-count').textContent = d.alert_count;
+
+                // Log
+                if (d.knife_detected && !prevKnife) addLog('Knife detected');
+                if (d.fallen_count > prevFallen) addLog('Fallen person detected');
+                if (d.alert_count > prevAlert) addLog('Alert #' + d.alert_count + ' triggered');
+                if (d.state === 'RESCUE' && document.getElementById('state-text').textContent !== 'RESCUE') {
+                    addLog('CRITICAL: RESCUE MODE ACTIVATED');
+                }
+
+                prevKnife = d.knife_detected;
+                prevFallen = d.fallen_count;
+                prevAlert = d.alert_count;
+            }).catch(() => { });
+        }
+
+        function addLog(msg) {
+            const list = document.getElementById('log-list');
+            const now = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+            const el = document.createElement('div');
+            el.className = 'log-entry';
+            el.innerHTML = `<span class="log-time">${now}</span><span class="log-msg">${msg}</span>`;
+            list.prepend(el);
+            while (list.children.length > 20) list.removeChild(list.lastChild);
+        }
+
+        setInterval(updateStatus, 500);
+        updateStatus();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(grep -r import /Users/user/Desktop/具生命跡象偵測之搜救機器人系統/*.py)"
+    ]
+  }
+}

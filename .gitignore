@@ -1,0 +1,22 @@
+# 環境變數（含 API Token）
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# AI 模型（太大不上傳，README 提供下載連結）
+model/*.onnx
+model/*.hef
+
+# 事件截圖（運行時產生）
+events/*.jpg
+events/*.png
+
+# 系統產生
+output/*.docx
+*.log
+.DS_Store

@@ -10,9 +10,6 @@ GPIO 接腳配置
 | Trigger | GPIO 4 | 觸發訊號 |
 | Echo | GPIO 21 | 回波訊號 |
 
-## Telegram 通知
-| Bot Token | 8307639789:AAFmPTmHn2rLmQUfw6ld6qwjRVCF8RYqZqA |
-| Chat ID | 5844353390 |
 
 ## 相機設定
 | 相機索引 | 0 |
